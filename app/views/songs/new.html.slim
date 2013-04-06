@@ -1,0 +1,25 @@
+.row
+  .span12
+    h1 New Song
+
+    hr
+
+    = form_for @song, html: {class: 'form-horizontal'} do |f|
+      .control-group
+        = f.label :name, class: 'control-label'
+        .controls
+          = f.text_field :name
+
+      .control-group
+        = f.label :artist, class: 'control-label'
+        .controls
+          = f.text_field :artist
+
+      .control-group
+        = f.label :youtube_id, 'Youtube ID', class: 'control-label'
+        .controls
+          = f.text_field :youtube_id
+
+      .control-group
+        .controls
+          = f.submit 'Create', class: 'btn'

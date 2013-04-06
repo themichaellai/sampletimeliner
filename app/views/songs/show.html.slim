@@ -1,0 +1,11 @@
+html
+  head
+    = javascript_include_tag 'http://www.youtube.com/player_api'
+
+  body
+    .row
+      .span12
+        h1 #{@song.name}
+        h2 by #{@song.artist}
+        div#player
+        = render 'youtube.js', song: @song
