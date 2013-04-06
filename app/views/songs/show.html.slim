@@ -3,6 +3,9 @@
     h1 #{@song.name}
     h2 by #{@song.artist}
     div#player
-    = render 'youtube.js', song: @song
+    - @samples.each do |sample|
+      div id="#{sample.youtube_id}"
+
+    = render 'youtube.js', song: @song, samples: @samples
 
     = link_to 'Add Sample', new_song_sample_path(@song), class: 'popup'

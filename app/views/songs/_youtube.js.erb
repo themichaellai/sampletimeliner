@@ -5,6 +5,33 @@ var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 var done = false;
 var player;
+var samples = [];
+function Sample(youtube_id, start, duration) {
+  this.youtube_id = youtube_id;
+  this.start = start;
+  this.duration = duration;
+  this.timeout = null;
+  this.player = null;
+  this.initPlayer = function() {
+    this.player = new YT.Player(this.youtube_id, {
+      height: '100',
+      width: '100',
+      videoId: this.youtube_id,
+      events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
+      }
+    });
+  }
+  this.setStopTimeout = function(currTime) {
+    this.timeout = window.setTimeout(stopVid());
+  }
+}
+<% samples.each do |sample| %>
+  samples.push(new Sample('<%= sample.youtube_id %>', <%= sample.start %>, <%= sample.duration %>));
+<% end %>
+
+
 function onYouTubePlayerAPIReady() {
   player = new YT.Player('player', {
     width: '940',
@@ -14,9 +41,13 @@ function onYouTubePlayerAPIReady() {
       'onStateChange': onPlayerStateChange
     }
   });
+  for (var i = 0; i < samples.length; i++) {
+    console.log(samples[i].youtube_id);
+    samples[i].initPlayer();
+  }
 }
 function onPlayerReady(evt) {
-  evt.target.playVideo();
+  //evt.target.playVideo();
 }
 function onPlayerStateChange(evt) {
   if (evt.data == YT.PlayerState.PLAYING && !done) {
