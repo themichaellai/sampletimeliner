@@ -16,7 +16,13 @@
         <%= link_to "Sample Timeliner", root_path, id: "logo" %>
         <nav>
           <ul class="nav pull-right">
-            <a href="#">hi</a>
+            <li>
+              <% if user_signed_in? %>
+                <%= link_to(current_user.email, '#') %>
+              <% else %>
+                <%= link_to "Sign in", new_user_session_path %>
+              <% end %>
+            </li>
           </ul>
         </nav>
       </div>
