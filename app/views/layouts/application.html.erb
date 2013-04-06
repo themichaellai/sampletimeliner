@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= full_title(yield(:title)) %></title>
+    <%= stylesheet_link_tag    "application", :media => "all" %>
+    <%= stylesheet_link_tag params[:controller] %>
+    <%= javascript_include_tag "application" %>
+    <%= javascript_include_tag params[:controller] %>
+    <%= csrf_meta_tags %>
+  </head>
+<body>
+
+  <header class ="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <%= link_to "Sample Timeliner", root_path, id: "logo" %>
+        <nav>
+          <ul class="nav pull-right">
+            <a href="#">hi</a>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <% if flash[:success] %>
+      <p class="alert alert-success"><%= flash[:success] %></p>
+    <% end %>
+    <% if flash[:notice] %>
+      <p class="alert alert-info"><%= notice %></p>
+    <% end %>
+    <% if flash[:error] %>
+      <p class="alert alert-error"><%= flash[:error] %></p>
+    <% end %>
+    <%= yield %>
+  </div>
+
+</body>
+</html>
