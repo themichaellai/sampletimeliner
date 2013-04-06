@@ -8,6 +8,7 @@ class SamplesController < ApplicationController
   def create
     @song = Song.find params[:song_id]
     @sample = Sample.new params[:sample]
+    @sample.song = @song
     if @sample.save
       render :text => '<script type="text/javascript"> window.close() </script>'
       return

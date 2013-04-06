@@ -18,5 +18,6 @@ class SongsController < ApplicationController
 
   def show
     @song = Song.find(params[:id])
+    @samples = @song.samples
   end
 end
