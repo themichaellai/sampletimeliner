@@ -1,13 +1,12 @@
 .row
   .span12
-    h1 New Song
+    h1 Sample
     hr
-
-    = form_for @song, html: {class: 'form-horizontal'} do |f|
+    = form_for [@song, @sample], html: {class: 'form-horizontal'} do |f|
       .control-group
         = f.label :name, class: 'control-label'
         .controls
-          = f.text_field :name
+          =f.text_field :name
 
       .control-group
         = f.label :artist, class: 'control-label'
@@ -18,6 +17,11 @@
         = f.label :youtube_id, 'Youtube ID', class: 'control-label'
         .controls
           = f.text_field :youtube_id
+
+      .control-group
+        = f.label :second_offset, class: 'control-label'
+        .controls
+          =f.text_field :second_offset, value: @time
 
       .control-group
         .controls

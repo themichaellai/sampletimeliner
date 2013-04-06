@@ -6,26 +6,34 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 var done = false;
 var player;
 function onYouTubePlayerAPIReady() {
-    player = new YT.Player('player', {
-      height: '390',
-      width: '640',
-      videoId: "<%= song.youtube_id %>",
-      events: {
-        'onReady': onPlayerReady,
-        'onStateChange': onPlayerStateChange
-      }
-    });
+  player = new YT.Player('player', {
+    width: '940',
+    videoId: "<%= song.youtube_id %>",
+    events: {
+      'onReady': onPlayerReady,
+      'onStateChange': onPlayerStateChange
+    }
+  });
 }
 function onPlayerReady(evt) {
-    evt.target.playVideo();
+  evt.target.playVideo();
 }
 function onPlayerStateChange(evt) {
-    if (evt.data == YT.PlayerState.PLAYING && !done) {
-        setTimeout(stopVideo, 6000);
-        done = true;
-    }
+  if (evt.data == YT.PlayerState.PLAYING && !done) {
+    done = true;
+  }
+  else if (evt.data == YT.PlayerState.PAUSED) {
+    console.log("paused");
+  }
+  else if (evt.data == YT.PlayerState.PLAYING) {
+    console.log("playing");
+  }
 }
 function stopVideo() {
-    player.stopVideo();
+  player.stopVideo();
+}
+
+function getPlayerTime() {
+  return player.getCurrentTime();
 }
 </script>
