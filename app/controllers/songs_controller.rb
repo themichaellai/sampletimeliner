@@ -1,4 +1,7 @@
 class SongsController < ApplicationController
+  def index
+    @songs = Song.paginate page: params[:page], per_page: 20
+  end
   def new
     @song = Song.new
   end

@@ -19,4 +19,8 @@ module ApplicationHelper
     secs = "0#{secs}" if secs < 10
     "#{mins}:#{secs}"
   end
+
+  def youtube_thumbnail(youtube_id)
+    "http://img.youtube.com/vi/#{youtube_id}/0.jpg"
+  end
 end

@@ -1,0 +1,10 @@
+h1 Songs
+table
+  - @songs.each do |song|
+    tr
+      td
+        img src=youtube_thumbnail(song.youtube_id) width=50
+      td
+        = link_to "#{song.name} - #{song.artist}", song_path(song)
+
+= will_paginate @songs
