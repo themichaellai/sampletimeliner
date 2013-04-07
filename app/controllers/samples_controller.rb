@@ -1,4 +1,7 @@
 class SamplesController < ApplicationController
+  before_filter :correct_user, only: [:edit, :update]
+  before_filter :authenticate_user!, only: [:new, :create]
+
   def new
     @time = params[:time]
     @song = Song.find params[:song_id]
@@ -9,6 +12,7 @@ class SamplesController < ApplicationController
     @song = Song.find params[:song_id]
     @sample = Sample.new params[:sample]
     @sample.song = @song
+    @sample.user = current_user
     if @sample.save
       render :text => '<script type="text/javascript"> window.close() </script>'
       return
@@ -22,11 +26,9 @@ class SamplesController < ApplicationController
 
   def edit
     @song = Song.find params[:song_id]
-    @sample = Sample.find params[:id]
   end
 
   def update
-    @sample = Sample.find params[:id]
     @sample.update_attributes params[:sample]
     if @sample.save
       redirect_to song_path(@sample.song)
@@ -37,4 +39,13 @@ class SamplesController < ApplicationController
       return
     end
   end
+
+  private
+    def correct_user
+      @sample = Sample.find params[:id]
+      unless @sample.user == current_user
+        flash[:error] = 'You do not own this sample.'
+        redirect_to song_path(@sample.song)
+      end
+    end
 end

@@ -1,6 +1,7 @@
 class Sample < ActiveRecord::Base
   attr_accessible :artist, :name, :song_id, :youtube_id, :second_offset, :start, :duration
   belongs_to :song
+  belongs_to :user
 
   validates :artist, presence: true
   validates :name, presence: true
