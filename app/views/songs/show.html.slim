@@ -1,13 +1,24 @@
 .row
   .span12
-    h1 #{@song.name}
-    h2 by #{@song.artist}
+    .title
+      h1.inline
+        =' @song.name
+      h3.inline by #{@song.artist}
     div#player
     canvas id="timeline" width="940" height="150"
-    - @samples.each do |sample|
-      .sample
+- @samples.each do |sample|
+  .row
+    .span3
+      .sample id="contain-#{sample.youtube_id}#{sample.id}"
         div id="#{sample.youtube_id}"
+    .span3
+      p
+        | "#{sample.name}" by #{sample.artist}
+        br
+        | Starts at #{seconds_to_display sample.second_offset}
+        br
+        | Duration: #{sample.duration} seconds
 
-    = render 'youtube.js', song: @song, samples: @samples
+= render 'youtube.js', song: @song, samples: @samples
 
-    = link_to 'Add Sample', new_song_sample_path(@song), class: 'popup'
+= link_to 'Add Sample', new_song_sample_path(@song), class: 'popup'

@@ -6,10 +6,12 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 var player;
 var samples = [];
 var timelineUpdate;
-var Sample = function(youtube_id, start, duration) {
+var Sample = function(youtube_id, start, duration, offset, id) {
   this.youtube_id = youtube_id;
   this.start = start;
   this.duration = duration;
+  this.offset = offset;
+  this.id = id;
   this.startTimeout = null;
   this.thisstopTimeout = null;
   this.splayer = new YT.Player(this.youtube_id, {
@@ -30,8 +32,21 @@ Sample.prototype = {
     var offset = this.start + .1 - currTime;
     if (offset > 0) {
       (function(_this) {
-        _this.startTimeout = setTimeout(function(){ _this.splayer.playVideo() }, offset * 1000);
-        _this.stopTimeout = setTimeout(function(){ _this.splayer.stopVideo() }, (offset + _this.duration) * 1000);
+        _this.splayer.unMute();
+        _this.splayer.playVideo();
+        _this.splayer.seekTo(_this.offset);
+        _this.splayer.pauseVideo();
+        _this.startTimeout = setTimeout(function(){
+          _this.splayer.playVideo();
+          _this.splayer.seekTo(_this.offset);
+          $('#contain-' + _this.youtube_id + _this.id).addClass('active');
+          player.mute();
+        }, offset * 1000);
+        _this.stopTimeout = setTimeout(function(){
+          _this.splayer.pauseVideo();
+          $('#contain-' + _this.youtube_id + _this.id).removeClass('active');
+          player.unMute();
+        }, (offset + _this.duration) * 1000);
       })(this);
 
     }
@@ -53,7 +68,7 @@ function onYouTubePlayerAPIReady() {
     }
   });
   <% samples.each do |sample| %>
-    samples.push(new Sample('<%= sample.youtube_id %>', <%= sample.start %>, <%= sample.duration %>));
+    samples.push(new Sample('<%= sample.youtube_id %>', <%= sample.second_offset %>, <%= sample.duration %>, <%= sample.start %>, <%= sample.id %>));
   <% end %>
 }
 function onPlayerReady(evt) {
@@ -64,6 +79,7 @@ function onPlayerStateChange(evt) {
   if (evt.data == YT.PlayerState.PLAYING) {
     console.log("playing");
     for (var i = 0; i < samples.length; i++) {
+      samples[i].clearTimeouts();
       samples[i].setTimeouts(player.getCurrentTime());
     }
     console.log(this);
@@ -79,6 +95,9 @@ function onPlayerStateChange(evt) {
   }
   else if (evt.data == YT.PlayerState.CUED) {
     console.log("cued");
+  }
+  else if (evt.data == -1) {
+    draw();
   }
 }
 
@@ -96,8 +115,9 @@ function draw() {
     ctx.beginPath();
     ctx.moveTo(offset * 940, 85);
     ctx.lineTo(offset * 940, 65);
-    ctx.closePath();
-    ctx.stroke();
+    ctx.lineTo(offset * 940 + 2, 65);
+    ctx.lineTo(offset * 940 + 2, 85);
+    ctx.fill();
     ctx.beginPath();
     ctx.moveTo(0, 75);
     ctx.lineTo(940, 75);
@@ -115,9 +135,10 @@ function draw() {
       ctx.lineTo(doffset * 940, 75 + (ydirection * 15));
       ctx.lineTo(doffset * 940, 75 + (ydirection * 20));
       ctx.lineTo(soffset * 940, 75 + (ydirection * 20));
-      ctx.lineTo(soffset * 950, 75 + (ydirection * 15));
-      ctx.closePath();
-      ctx.stroke();
+      ctx.lineTo(soffset * 940, 75 + (ydirection * 15));
+      ctx.fill();
+      //ctx.closePath();
+      //ctx.stroke();
     }
   }
 }
