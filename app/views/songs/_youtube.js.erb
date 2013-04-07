@@ -5,6 +5,7 @@ var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 var player;
 var samples = [];
+var timelineUpdate;
 var Sample = function(youtube_id, start, duration) {
   this.youtube_id = youtube_id;
   this.start = start;
@@ -17,7 +18,6 @@ var Sample = function(youtube_id, start, duration) {
     videoId: this.youtube_id,
     events: {
       'onReady': onPlayerReady,
-      'onStateChange': onPlayerStateChange
     }
   });
   this.getPlayer = function() {
@@ -28,7 +28,6 @@ Sample.prototype = {
   // Sets a timeout based on currTime (of main video) for this Sample to start
   setTimeouts: function(currTime) {
     var offset = this.start + .1 - currTime;
-    console.log(this.youtube_id + "offset: " + offset);
     if (offset > 0) {
       (function(_this) {
         _this.startTimeout = setTimeout(function(){ _this.splayer.playVideo() }, offset * 1000);
@@ -67,12 +66,15 @@ function onPlayerStateChange(evt) {
     for (var i = 0; i < samples.length; i++) {
       samples[i].setTimeouts(player.getCurrentTime());
     }
+    console.log(this);
+    timelineUpdate = setInterval(function() {draw()}, 50);
   }
   else if (evt.data == YT.PlayerState.PAUSED) {
     console.log("paused");
     for (var i = 0; i < samples.length; i++) {
       samples[i].clearTimeouts();
     }
+    clearInterval(timelineUpdate);
   }
   else if (evt.data == YT.PlayerState.CUED) {
     console.log("cued");
@@ -81,5 +83,25 @@ function onPlayerStateChange(evt) {
 
 function getPlayerTime() {
   return player.getCurrentTime();
+}
+
+function draw() {
+  var canvas = document.getElementById('timeline');
+  if (canvas.getContext) {
+    var ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, 940, 150);
+
+    var offset = (player.getCurrentTime()/player.getDuration());
+    ctx.beginPath();
+    ctx.moveTo(offset * 940, 75);
+    ctx.lineTo(offset * 940, 65);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, 75);
+    ctx.lineTo(940, 75);
+    ctx.closePath();
+    ctx.stroke();
+  }
 }
 </script>
