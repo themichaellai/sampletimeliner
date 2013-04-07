@@ -1,4 +1,6 @@
 class Song < ActiveRecord::Base
+  extend FriendlyId
+  friendly_id :name, use: :slugged
   attr_accessible :artist, :name, :youtube_id
   belongs_to :user
   has_many :samples
