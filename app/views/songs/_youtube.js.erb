@@ -6,7 +6,8 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 var player;
 var samples = [];
 var timelineUpdate;
-var Sample = function(youtube_id, start, duration, offset, id) {
+var Sample = function(youtube_id, start, duration, offset, color, id) {
+  this.color = color;
   this.youtube_id = youtube_id;
   this.start = start;
   this.duration = duration;
@@ -69,7 +70,7 @@ function onYouTubePlayerAPIReady() {
     }
   });
   <% samples.each do |sample| %>
-    samples.push(new Sample('<%= sample.youtube_id %>', <%= sample.second_offset %>, <%= sample.duration %>, <%= sample.start %>, <%= sample.id %>));
+    samples.push(new Sample('<%= sample[:sample].youtube_id %>', <%= sample[:sample].second_offset %>, <%= sample[:sample].duration %>, <%= sample[:sample].start %>, '<%= sample[:color] %>', <%= sample[:sample].id %>));
   <% end %>
 }
 function onPlayerReady(evt) {
@@ -83,7 +84,6 @@ function onPlayerStateChange(evt) {
       samples[i].clearTimeouts();
       samples[i].setTimeouts(player.getCurrentTime());
     }
-    console.log(this);
     timelineUpdate = setInterval(function() {draw()}, 50);
   }
   else if (evt.data == YT.PlayerState.PAUSED) {
@@ -118,6 +118,7 @@ function draw() {
     ctx.lineTo(offset * 940, 65);
     ctx.lineTo(offset * 940 + 2, 65);
     ctx.lineTo(offset * 940 + 2, 85);
+    ctx.fillStyle = 'black';
     ctx.fill();
     ctx.beginPath();
     ctx.moveTo(0, 75);
@@ -137,6 +138,7 @@ function draw() {
       ctx.lineTo(doffset * 940, 75 + (ydirection * 20));
       ctx.lineTo(soffset * 940, 75 + (ydirection * 20));
       ctx.lineTo(soffset * 940, 75 + (ydirection * 15));
+      ctx.fillStyle = samples[i].color;
       ctx.fill();
       //ctx.closePath();
       //ctx.stroke();

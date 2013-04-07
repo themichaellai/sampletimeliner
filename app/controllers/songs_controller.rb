@@ -21,6 +21,12 @@ class SongsController < ApplicationController
 
   def show
     @song = Song.find(params[:id])
-    @samples = @song.samples
+    @colors = [:red, :orange, :green, :blue]
+    @samples = @song.samples.map do |sample|
+      {
+        sample: sample,
+        color: @colors.rotate![0]
+      }
+    end
   end
 end

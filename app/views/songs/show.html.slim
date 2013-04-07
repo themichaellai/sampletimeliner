@@ -10,17 +10,17 @@
 - @samples.each do |sample|
   .row
     .span3
-      .sample id="contain-#{sample.youtube_id}#{sample.id}"
-        div id="#{sample.youtube_id}"
-    .span3
+      .sample id="contain-#{sample[:sample].youtube_id}#{sample[:sample].id}"
+        div id="#{sample[:sample].youtube_id}"
+    .span3.color-label class=sample[:color]
       p
-        | "#{sample.name}" by #{sample.artist}
+        | "#{sample[:sample].name}" by #{sample[:sample].artist}
         br
-        | Starts at #{seconds_to_display sample.second_offset}
+        | Starts at #{seconds_to_display sample[:sample].second_offset}
         br
-        | Duration: #{sample.duration} seconds
+        | Duration: #{sample[:sample].duration} seconds
         br
-        = link_to 'Edit', edit_song_sample_path(@song, sample)
+        = link_to 'Edit', edit_song_sample_path(@song, sample[:sample])
 
 = render 'youtube.js', song: @song, samples: @samples
 
