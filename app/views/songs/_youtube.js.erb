@@ -61,6 +61,7 @@ Sample.prototype = {
 function onYouTubePlayerAPIReady() {
   player = new YT.Player('player', {
     width: '940',
+    height: '200',
     videoId: "<%= song.youtube_id %>",
     events: {
       'onReady': onPlayerReady,
