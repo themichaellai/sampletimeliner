@@ -19,4 +19,22 @@ class SamplesController < ApplicationController
       return
     end
   end
+
+  def edit
+    @song = Song.find params[:song_id]
+    @sample = Sample.find params[:id]
+  end
+
+  def update
+    @sample = Sample.find params[:id]
+    @sample.update_attributes params[:sample]
+    if @sample.save
+      redirect_to song_path(@sample.song)
+      return
+    else
+      flash[:error] = 'There are errors with this sample'
+      render 'edit'
+      return
+    end
+  end
 end

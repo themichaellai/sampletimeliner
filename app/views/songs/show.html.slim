@@ -1,3 +1,4 @@
+- provide(:title, "#{@song.name} - #{@song.artist}")
 .row
   .span12
     .title
@@ -18,6 +19,8 @@
         | Starts at #{seconds_to_display sample.second_offset}
         br
         | Duration: #{sample.duration} seconds
+        br
+        = link_to 'Edit', edit_song_sample_path(@song, sample)
 
 = render 'youtube.js', song: @song, samples: @samples
 
