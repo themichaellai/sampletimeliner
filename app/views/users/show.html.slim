@@ -1,0 +1,15 @@
+- provide(:title, @user.email)
+
+.row
+  .span8
+    h1 Songs
+    ul
+    - @songs.each do |song|
+      li
+        = link_to song.name, song_path(song)
+
+  .span4
+    h2
+      = @user.email
+    p Authored #{@songs.count} songs
+
