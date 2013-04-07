@@ -1,0 +1,10 @@
+.row
+  .span8
+    h1 #{@artist.name}
+    h2 Songs
+    ul
+    - @artist.songs.each do |song|
+      li #{link_to song.name, song_path(song)}
+
+  .span4
+    p #{@artist.bio}

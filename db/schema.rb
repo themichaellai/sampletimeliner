@@ -11,7 +11,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130407134149) do
+ActiveRecord::Schema.define(:version => 20130407150549) do
+
+  create_table "artists", :force => true do |t|
+    t.string   "name"
+    t.text     "bio"
+    t.string   "slug"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "artists", ["slug"], :name => "index_artists_on_slug", :unique => true
 
   create_table "samples", :force => true do |t|
     t.string   "name"
@@ -28,12 +38,12 @@ ActiveRecord::Schema.define(:version => 20130407134149) do
 
   create_table "songs", :force => true do |t|
     t.string   "name"
-    t.string   "artist"
     t.string   "youtube_id"
     t.integer  "user_id"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.string   "slug"
+    t.integer  "artist_id"
   end
 
   add_index "songs", ["slug"], :name => "index_songs_on_slug", :unique => true

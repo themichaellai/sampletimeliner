@@ -4,7 +4,7 @@
     .title
       h1.inline
         =' @song.name
-      h3.inline by #{@song.artist}
+      h3.inline by #{link_to @song.artist.name, artist_path(@song.artist)}
     div#player
     canvas id="timeline" width="940" height="150"
 - @samples.each do |sample|

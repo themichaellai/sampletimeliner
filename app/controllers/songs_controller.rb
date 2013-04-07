@@ -7,8 +7,10 @@ class SongsController < ApplicationController
   end
 
   def create
-    @song = Song.new params[:song]
+    @song = Song.new params[:song].except(:artist)
     @song.user = current_user
+    @artist = Artist.find_or_create_by_name(params[:song][:artist])
+    @song.artist = @artist
 
     if @song.save
       flash[:success] = 'Song created!'
