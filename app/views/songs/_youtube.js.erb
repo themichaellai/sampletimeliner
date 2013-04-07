@@ -3,7 +3,6 @@ var tag = document.createElement('script');
 tag.src = "http://www.youtube.com/player_api";
 var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-var done = false;
 var player;
 var samples = [];
 var Sample = function(youtube_id, start, duration) {
@@ -28,17 +27,20 @@ var Sample = function(youtube_id, start, duration) {
 Sample.prototype = {
   // Sets a timeout based on currTime (of main video) for this Sample to start
   setTimeouts: function(currTime) {
-    var offset = this.start - currTime;
+    var offset = this.start + .1 - currTime;
+    console.log(this.youtube_id + "offset: " + offset);
     if (offset > 0) {
-      _this = this;
-      this.startTimeout = setTimeout(function(){ _this.splayer.playVideo() }, offset * 1000);
-      this.stopTimeout = setTimeout(function(){ _this.splayer.stopVideo() }, (offset + this.duration) * 1000);
+      (function(_this) {
+        _this.startTimeout = setTimeout(function(){ _this.splayer.playVideo() }, offset * 1000);
+        _this.stopTimeout = setTimeout(function(){ _this.splayer.stopVideo() }, (offset + _this.duration) * 1000);
+      })(this);
+
     }
   },
   clearTimeouts: function() {
-    window.clearTimeout(this.startTimeout);
-    window.clearTimeout(this.stopTimeout);
-  }
+    clearTimeout(this.startTimeout);
+    clearTimeout(this.stopTimeout);
+  },
 }
 
 
@@ -56,20 +58,24 @@ function onYouTubePlayerAPIReady() {
   <% end %>
 }
 function onPlayerReady(evt) {
-  //evt.target.playVideo();
+  evt.target.playVideo();
+  evt.target.pauseVideo();
 }
 function onPlayerStateChange(evt) {
-  if (evt.data == YT.PlayerState.PLAYING && !done) {
-    done = true;
-  }
-  else if (evt.data == YT.PlayerState.PAUSED) {
-    console.log("paused");
-  }
-  else if (evt.data == YT.PlayerState.PLAYING) {
+  if (evt.data == YT.PlayerState.PLAYING) {
     console.log("playing");
     for (var i = 0; i < samples.length; i++) {
       samples[i].setTimeouts(player.getCurrentTime());
     }
+  }
+  else if (evt.data == YT.PlayerState.PAUSED) {
+    console.log("paused");
+    for (var i = 0; i < samples.length; i++) {
+      samples[i].clearTimeouts();
+    }
+  }
+  else if (evt.data == YT.PlayerState.CUED) {
+    console.log("cued");
   }
 }
 
