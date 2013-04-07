@@ -2,14 +2,16 @@
 
 .row
   .span8
-    h1 Songs
-    ul
-    - @songs.each do |song|
-      li
-        = link_to song.name, song_path(song)
+    h1.title Songs
+    table
+      - @songs.each do |song|
+        tr
+          td
+            img src=youtube_thumbnail(song.youtube_id) width=50
+          td
+            = link_to song.name, song_path(song)
 
   .span4
     h2
       = @user.email
     p Authored #{@songs.count} songs
-
