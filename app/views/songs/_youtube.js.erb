@@ -6,30 +6,40 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 var done = false;
 var player;
 var samples = [];
-function Sample(youtube_id, start, duration) {
+var Sample = function(youtube_id, start, duration) {
   this.youtube_id = youtube_id;
   this.start = start;
   this.duration = duration;
-  this.timeout = null;
-  this.player = null;
-  this.initPlayer = function() {
-    this.player = new YT.Player(this.youtube_id, {
-      height: '100',
-      width: '100',
-      videoId: this.youtube_id,
-      events: {
-        'onReady': onPlayerReady,
-        'onStateChange': onPlayerStateChange
-      }
-    });
-  }
-  this.setStopTimeout = function(currTime) {
-    this.timeout = window.setTimeout(stopVid());
+  this.startTimeout = null;
+  this.thisstopTimeout = null;
+  this.splayer = new YT.Player(this.youtube_id, {
+    height: '100',
+    width: '100',
+    videoId: this.youtube_id,
+    events: {
+      'onReady': onPlayerReady,
+      'onStateChange': onPlayerStateChange
+    }
+  });
+  this.getPlayer = function() {
+    return splayer;
   }
 }
-<% samples.each do |sample| %>
-  samples.push(new Sample('<%= sample.youtube_id %>', <%= sample.start %>, <%= sample.duration %>));
-<% end %>
+Sample.prototype = {
+  // Sets a timeout based on currTime (of main video) for this Sample to start
+  setTimeouts: function(currTime) {
+    var offset = this.start - currTime;
+    if (offset > 0) {
+      _this = this;
+      this.startTimeout = setTimeout(function(){ _this.splayer.playVideo() }, offset * 1000);
+      this.stopTimeout = setTimeout(function(){ _this.splayer.stopVideo() }, (offset + this.duration) * 1000);
+    }
+  },
+  clearTimeouts: function() {
+    window.clearTimeout(this.startTimeout);
+    window.clearTimeout(this.stopTimeout);
+  }
+}
 
 
 function onYouTubePlayerAPIReady() {
@@ -41,10 +51,9 @@ function onYouTubePlayerAPIReady() {
       'onStateChange': onPlayerStateChange
     }
   });
-  for (var i = 0; i < samples.length; i++) {
-    console.log(samples[i].youtube_id);
-    samples[i].initPlayer();
-  }
+  <% samples.each do |sample| %>
+    samples.push(new Sample('<%= sample.youtube_id %>', <%= sample.start %>, <%= sample.duration %>));
+  <% end %>
 }
 function onPlayerReady(evt) {
   //evt.target.playVideo();
@@ -58,10 +67,10 @@ function onPlayerStateChange(evt) {
   }
   else if (evt.data == YT.PlayerState.PLAYING) {
     console.log("playing");
+    for (var i = 0; i < samples.length; i++) {
+      samples[i].setTimeouts(player.getCurrentTime());
+    }
   }
-}
-function stopVideo() {
-  player.stopVideo();
 }
 
 function getPlayerTime() {
